@@ -2,6 +2,9 @@ module crudJavafx {
 	requires javafx.controls;
 	requires javafx.fxml;
 	requires javafx.base;
+	requires java.sql;
+	requires mysql.connector.java;
+	//requires mysql.connector.java;
 	
 	//exports javafx.fxml to gui;
 	//javafx.exports;

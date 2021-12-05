@@ -3,6 +3,7 @@ package application;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.function.Consumer;
 
 import gui.DepartmentListController;
 import javafx.fxml.FXML;
@@ -31,12 +32,15 @@ public class MainViewController implements Initializable{
 	
 	@FXML
 	public void onMenuItemDepartmentAction() {
-		loadView2("/gui/DepartmentList.fxml");
+		loadView("/gui/DepartmentList.fxml", (DepartmentListController controller)->{
+			controller.setDepartmentService(new DepartmentService());
+			controller.updateTableView();
+		});
 	}
 	
 	@FXML
 	public void onMenuItemAboutAction() {
-		loadView("/gui/About.fxml");
+		loadView("/gui/About.fxml", x->{});
 	}
 
 	@Override
@@ -44,7 +48,7 @@ public class MainViewController implements Initializable{
 		// TODO Auto-generated method stub
 	}
 	
-	private synchronized void loadView(String asboluteName) {
+	private synchronized <T> void loadView(String asboluteName, Consumer<T> intitializinAction) {
 		try {
 			FXMLLoader loader = new FXMLLoader(getClass().getResource(asboluteName));
 			VBox newVBox = loader.load();
@@ -55,36 +59,13 @@ public class MainViewController implements Initializable{
 			Node mainMenu = mainVBox.getChildren().get(0);
 			//limpando a tela
 			mainVBox.getChildren().clear();
-			//adicionando novamente 
-			mainVBox.getChildren().add(mainMenu);
-			mainVBox.getChildren().addAll(newVBox.getChildren());
-		}
-		catch(IOException e) {
-			Alerts.showAlert("IOException", "Erro loading view", e.getMessage(), AlertType.ERROR);
-			e.printStackTrace();
-		}
-	}
-
-	
-	private synchronized void loadView2(String asboluteName) {
-		try {
-			FXMLLoader loader = new FXMLLoader(getClass().getResource(asboluteName));
-			VBox newVBox = loader.load();
-			
-			//Atualizando a pagina
-			Scene mainScene = Main.getMainScene();
-			VBox mainVBox = (VBox)((ScrollPane)mainScene.getRoot()).getContent();
-			Node mainMenu = mainVBox.getChildren().get(0);
-			//limpando a tela
-			mainVBox.getChildren().clear();
-			//adicionando novamente 
+			//adicionando novamente
 			mainVBox.getChildren().add(mainMenu);
 			mainVBox.getChildren().addAll(newVBox.getChildren());
 			
-			DepartmentListController controller = loader.getController();
-			controller.setDepartmentService(new DepartmentService());
-			controller.updateTableView();
-		}
+			T controller = loader.getController();
+			intitializinAction.accept(controller);
+			}
 		catch(IOException e) {
 			Alerts.showAlert("IOException", "Erro loading view", e.getMessage(), AlertType.ERROR);
 			e.printStackTrace();
