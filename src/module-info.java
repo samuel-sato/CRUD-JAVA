@@ -7,10 +7,16 @@ module crudJavafx {
 	//requires mysql.connector.java;
 	
 	//exports javafx.fxml to gui;
-	//javafx.exports;
+	
 	exports gui to javafx.fxml;
-	opens gui to javafx.fxml;
+	opens gui to javafx.fxml, javafx.graphics;
 	opens application to javafx.graphics, javafx.fxml;
 	//exports model.entities to javafx.fxml;
 	opens model.entities to javafx.fxml, javafx.base;
+	
+	exports model.entities to gui;
+	exports model.services to gui;
+	
+	
+	
 }
